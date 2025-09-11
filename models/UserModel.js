@@ -10,9 +10,13 @@ export const UserModel = DB.define("users", {
   email: {
     type: DataTypes.STRING,
     unique: true,
+    validate: {
+      isEmail: true,
+    },
   },
   username: {
     type: DataTypes.STRING,
+    unique: true,
   },
   password: {
     type: DataTypes.TEXT,
