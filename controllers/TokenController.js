@@ -12,11 +12,11 @@ export function requestNewAccessToken(req, res) {
   try {
     validateJwt(refreshToken, "refresh", async (error, decoded) => {
       if (error && error.name === "JsonWebTokenError") {
-        return res.status(400).json({ msg: "invalid token" });
+        return res.status(401).json({ msg: "invalid token" });
       }
 
       if (error && error.name === "TokenExpiredError") {
-        return res.status(400).json({ msg: "expired token" });
+        return res.status(401).json({ msg: "expired token" });
       }
 
       const sessionExist = await RefreshTokensModel.findOne({
@@ -31,7 +31,7 @@ export function requestNewAccessToken(req, res) {
       });
 
       if (!sessionExist) {
-        return res.status(400).json({ msg: "invalid/revoked/expired token" });
+        return res.status(401).json({ msg: "invalid/revoked/expired token" });
       }
 
       const newAccessToken = generateAccessToken({
