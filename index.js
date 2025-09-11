@@ -3,6 +3,9 @@ import morgan from "morgan";
 import userRouter from "./routes/UserRouter.js";
 import DB from "./config/Database.js";
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
