@@ -5,7 +5,8 @@ import {
   generateAccessToken,
   generateRefreshToken,
   REFRESH_TOKEN_EXPIRED,
-} from "../utils/generate_token.js";
+  validateJwt,
+} from "../utils/token.js";
 
 export async function getUsers(req, res) {
   res.json({
@@ -114,6 +115,55 @@ export async function loginUser(req, res) {
     res.json({
       msg: "login done",
       accessToken: accessToken,
+    });
+  } catch (error) {
+    console.log(error);
+    console.log(error.name);
+    return res.status(error.code || 500).json({
+      msg:
+        error.errors?.map((item) => item.message) ||
+        error.msg ||
+        "internal server error",
+    });
+  }
+}
+
+export async function logoutUser(req, res) {
+  const refreshToken = req.cookies?.["refresh-token"];
+  if (!refreshToken) {
+    return res.status(401).json({ msg: "not authorized" });
+  }
+
+  try {
+    validateJwt(refreshToken, "refresh", async (error, decoded) => {
+      if (error && error.name === "JsonWebTokenError") {
+        return res.status(400).json({ msg: "invalid token" });
+      }
+
+      const sessionExist = await RefreshTokensModel.findOne({
+        where: {
+          userId: decoded.id,
+          token: refreshToken,
+          isRevoked: false,
+        },
+      });
+
+      if (!sessionExist) {
+        return res.status(400).json({ msg: "invalid token" });
+      }
+
+      const [revokeSession] = await RefreshTokensModel.update(
+        { isRevoked: true },
+        { where: { id: sessionExist.id } }
+      );
+
+      if (revokeSession === 0) {
+        throw Error("internal error DB");
+      }
+
+      res.clearCookie("refresh-token");
+
+      return res.json({ msg: "logout done" });
     });
   } catch (error) {
     console.log(error);
