@@ -4,6 +4,7 @@ import userRouter from "./routes/UserRouter.js";
 import DB from "./config/Database.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import tokenRouter from "./routes/TokenRouter.js";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/users", userRouter);
+app.use("/api/token", tokenRouter);
 
 app.listen(5000, async () => {
   console.log("server running on 5000");

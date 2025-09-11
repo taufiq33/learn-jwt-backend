@@ -9,9 +9,15 @@ import {
 } from "../utils/token.js";
 
 export async function getUsers(req, res) {
-  res.json({
-    msg: "Testing response",
-  });
+  console.log(req.user);
+  try {
+    const users = await UserModel.findAll({
+      attributes: ["email", "username", "id", "createdAt"],
+    });
+    return res.json({ data: users });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function registerUser(req, res) {
