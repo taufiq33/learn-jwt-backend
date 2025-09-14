@@ -19,14 +19,23 @@ export function generateRefreshToken(payload) {
   return refreshToken;
 }
 
-export function validateJwt(token, type, callback) {
-  if (!type) {
-    return false;
-  }
-  const secret =
-    type === "access"
-      ? process.env.SECRET_KEY_ACCESS_TOKEN
-      : process.env.SECRET_KEY_REFRESH_TOKEN;
+export async function validateJwt(token, type) {
+  return new Promise((resolve, reject) => {
+    if (!type) {
+      return reject("type required");
+    }
 
-  return jwt.verify(token, secret, callback);
+    const secret =
+      type === "access"
+        ? process.env.SECRET_KEY_ACCESS_TOKEN
+        : process.env.SECRET_KEY_REFRESH_TOKEN;
+
+    return jwt.verify(token, secret, (error, decoded) => {
+      if (error) {
+        return reject(error);
+      }
+
+      return resolve(decoded);
+    });
+  });
 }

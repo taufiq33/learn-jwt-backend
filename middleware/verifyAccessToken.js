@@ -11,17 +11,15 @@ export async function verifyAccessToken(req, res, next) {
   if (!accessToken) {
     return res.sendStatus(401);
   }
-
+  eda;
   try {
-    validateJwt(accessToken, "access", async (error, decoded) => {
-      if (error && error.name === "TokenExpiredError") {
-        return res.status(401).json({ msg: "accToken Expired" });
-      }
-
-      req.user = decoded;
-      next();
-    });
+    const decoded = await validateJwt(accessToken, "access");
+    req.user = decoded;
+    next();
   } catch (error) {
-    return res.sendStatus(500);
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ msg: "token expired" });
+    }
+    return res.status(401).json({ msg: "invalid token " });
   }
 }
