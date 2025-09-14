@@ -120,6 +120,11 @@ export async function loginUser(req, res) {
 
     res.json({
       msg: "login done",
+      user: {
+        id: userExist.id,
+        email: userExist.email,
+        username: userExist.username,
+      },
       accessToken: accessToken,
     });
   } catch (error) {
