@@ -5,6 +5,7 @@ import DB from "./config/Database.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import tokenRouter from "./routes/TokenRouter.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors({ credentials: true, origin: "http://localhost:5225" }));
 app.use("/api/users", userRouter);
 app.use("/api/token", tokenRouter);
 
