@@ -30,7 +30,7 @@ export async function validateJwt(token, type) {
         ? process.env.SECRET_KEY_ACCESS_TOKEN
         : process.env.SECRET_KEY_REFRESH_TOKEN;
 
-    return jwt.verify(token, secret, (error, decoded) => {
+    jwt.verify(token, secret, (error, decoded) => {
       if (error) {
         return reject(error);
       }
