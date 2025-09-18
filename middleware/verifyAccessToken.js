@@ -11,14 +11,14 @@ export async function verifyAccessToken(req, res, next) {
   if (!accessToken) {
     return res.sendStatus(401);
   }
-  eda;
+
   try {
     const decoded = await validateJwt(accessToken, "access");
     req.user = decoded;
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ msg: "token expired" });
+      return res.status(401).json({ msg: "acctoken expired" });
     }
     return res.status(401).json({ msg: "invalid token " });
   }
